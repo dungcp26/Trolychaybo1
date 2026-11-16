@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Giai nen du an
-        run: unzip -oq TroLyChayBo.zip
+        run: for z in ./*.zip; do unzip -oq "$z"; done
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
