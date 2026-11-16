@@ -1,0 +1,38 @@
+name: Build APK
+on:
+  workflow_dispatch:
+    inputs:
+      kieu:
+        description: "debug = APK thu | aab = ban phat hanh | keygen = tao khoa ky"
+        type: choice
+        options:
+          - debug
+          - aab
+          - keygen
+        default: debug
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    env:
+      KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Giai nen du an
+        run: unzip -oq TroLyChayBo.zip
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.13"
+      - name: Chay
+        run: bash TroLyChayBo/ci.sh "${{ inputs.kieu }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ket-qua
+          path: out/*
+          if-no-files-found: error
